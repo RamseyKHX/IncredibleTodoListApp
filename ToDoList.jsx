@@ -1,9 +1,8 @@
+// ToDoList.jsx
 import React from 'react';
-import ToDoForm from './ToDoForm';
+import { Pressable, View, Text, ScrollView, StyleSheet } from 'react-native';
 
-import { ScrollView, Pressable, View, Text, StyleSheet } from 'react-native';
-
-function ToDoList() {
+const ToDoList = () => {
   return (
     <ScrollView>
       <Pressable>
@@ -12,7 +11,7 @@ function ToDoList() {
         </View>
       </Pressable>
       <Pressable>
-        <View style={[styles.task]}>
+        <View style={styles.task}>
           <Text style={styles.taskText}>Go to gym</Text>
         </View>
       </Pressable>
@@ -23,7 +22,7 @@ function ToDoList() {
       </Pressable>
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   task: {
