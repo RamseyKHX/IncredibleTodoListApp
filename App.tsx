@@ -1,12 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -15,49 +7,65 @@ import {
   Text,
   useColorScheme,
   View,
+  TextInput,
+  Button,
+  Pressable,
 } from 'react-native';
+import { Colors, Header } from 'react-native/Libraries/NewAppScreen';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+type Task = {
+  id: number;
+  text: string;
+  completed: boolean;
+};
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+function ToDoForm({ onAddTask }) {
+  const [task, setTask] = useState('');
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const handleAddTask = () => {
+    if (task.trim()) {
+      onAddTask(task);
+      setTask('');
+    }
+  };
+
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={formStyles.form}>
+      <TextInput
+        style={formStyles.input}
+        placeholder="Add a new task..."
+        value={task}
+        onChangeText={setTask}
+      />
+      <Button title="Add" onPress={handleAddTask} />
     </View>
   );
 }
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+function ToDoList({ tasks }: { tasks: Task[] }) {
+  return (
+    <ScrollView style={listStyles.list}>
+      {tasks.map((task) => (
+        <Pressable key={task.id}>
+          <View style={[listStyles.task, task.completed && listStyles.completed]}>
+            <Text style={listStyles.taskText}>{task.text}</Text>
+          </View>
+        </Pressable>
+      ))}
+    </ScrollView>
+  );
+}
 
+function App() {
+
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  const addTask = (taskText: string) => {
+    const newTask: Task = { id: tasks.length + 1, text: taskText, completed: false };
+    setTasks([...tasks, newTask]);
+  };
+
+  const isDarkMode = useColorScheme() === 'dark';
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
@@ -68,33 +76,51 @@ function App(): React.JSX.Element {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
+      <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
         <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+        <View style={{ backgroundColor: isDarkMode ? Colors.black : Colors.white }}>
+          <ToDoList tasks={tasks} />
+          <ToDoForm onAddTask={addTask} />
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
+
+const formStyles = StyleSheet.create({
+  form: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: 20,
+    marginTop: 20,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginRight: 10,
+  },
+});
+
+const listStyles = StyleSheet.create({
+  list: {
+    marginTop: 20,
+  },
+  task: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+  },
+  completed: {
+    backgroundColor: '#e0e0e0',
+  },
+  taskText: {
+    fontSize: 16,
+  },
+});
 
 const styles = StyleSheet.create({
   sectionContainer: {
