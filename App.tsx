@@ -144,62 +144,49 @@
 // export default App;
 
 
-
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Pressable,
-  View,
-  Text,
-  ScrollView,
-  TextInput,
-  Button
-} from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, StyleSheet, View, ScrollView, TextInput, Button } from 'react-native';
+import ToDoList from './ToDoList';
 
 function App() {
+  // Part A
+  const [tasks, setTasks] = useState([
+    { id: 1, text: 'Do laundry', completed: false },
+    { id: 2, text: 'Go to gym', completed: false },
+    { id: 3, text: 'Walk dog', completed: false },
+  ]);
+
+  const [newTaskText, setNewTaskText] = useState('');
+
+ 
+  const addTask = () => {
+    if (newTaskText.trim()) {
+      const newTask = { id: tasks.length + 1, text: newTaskText, completed: false };
+      setTasks([...tasks, newTask]);
+      setNewTaskText(''); 
+    }
+  };
+
   return (
     <SafeAreaView>
       <ScrollView>
-        <Pressable>
-          <View style={[styles.task, styles.completed]}>
-            <Text style={styles.taskText}>Do laundry</Text>
-          </View>
-        </Pressable>
-        <Pressable>
-          <View style={[styles.task]}>
-            <Text style={styles.taskText}>Go to gym</Text>
-          </View>
-        </Pressable>
-        <Pressable>
-          <View style={[styles.task, styles.completed]}>
-            <Text style={styles.taskText}>Walk dog</Text>
-          </View>
-        </Pressable>
+        {/* Part B Step 1" */}
+        <ToDoList tasks={tasks} />
       </ScrollView>
       <View style={styles.form}>
         <TextInput
           style={styles.input}
           placeholder="Add a new task..."
+          value={newTaskText}
+          onChangeText={setNewTaskText}
         />
-        <Button title="Add" />
+        <Button title="Add" onPress={addTask} />
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  task: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-  },
-  completed: {
-    backgroundColor: '#e0e0e0',
-  },
-  taskText: {
-    fontSize: 16,
-  },
   form: {
     flexDirection: 'row',
     justifyContent: 'space-between',
